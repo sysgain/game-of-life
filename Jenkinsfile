@@ -1,14 +1,12 @@
-docker.withRegistry('', 'dockerhub-credentials-cleclerc') {
+docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws') {
 
     checkout scm
-    def mavenSettingsFile = "${pwd()}/.m2/settings.xml"
-    writeFile file: mavenSettingsFile, text: "<settings><localRepository>${pwd()}/.m2/repo</localRepository></settings>"
     echo "1. PWD: ${pwd()}"
 
     stage 'Build Web App'
     docker.image('cloudbees/java-build-tools:0.0.5').inside {
         echo "2. PWD: ${pwd()}"
-        sh "mvn -B -V -s ${mavenSettingsFile} clean package"
+        sh "mvn -B -V -Dmaven.local.repo=${pwd()}/.m2/repo clean package"
     }
 
     // build docker image 'cleclerc/game-of-life' and push it to docker hub
@@ -41,7 +39,7 @@ docker.withRegistry('', 'dockerhub-credentials-cleclerc') {
             sh """
                curl http://gameoflife-ecs.beesshop.org/
                cd gameoflife-acceptance-tests
-               mvn -B -V -s -s ${mavenSettingsFile} verify -Dwebdriver.driver=remote -Dwebdriver.base.url=http://gameoflife-ecs.beesshop.org/
+               mvn -B -V -s -Dmaven.local.repo=${pwd()}/.m2/repo verify -Dwebdriver.driver=remote -Dwebdriver.base.url=http://gameoflife-ecs.beesshop.org/
             """
         }
     }
