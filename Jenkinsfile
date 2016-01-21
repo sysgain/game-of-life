@@ -1,4 +1,3 @@
-docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws') {
 
     checkout scm
     echo "1. PWD: ${pwd()}"
@@ -15,11 +14,13 @@ docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws
     echo 'Build docker image cleclerc/game-of-life...'
     def gameOfLifeImage = docker.build('cleclerc/game-of-life', 'gameoflife-web')
 
-    echo 'Push docker image cleclerc/game-of-life to Docker Hub...'
-    gameOfLifeImage.push()
+    echo 'Push docker image cleclerc/game-of-life to ECR...'
+    docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws') {
+        gameOfLifeImage.push()
+    }
 
     stage 'Redeploy ECS Service'
-    wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 'aws-cleclerc-admin', defaultRegion: 'us-east-1']) {
+    wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 'aws', defaultRegion: 'us-east-1']) {
         // TODO THESE ARE PROBABLY NOT THE BEST ECS CALLS
         sh "aws ecs update-service --service game-of-life --desired-count 0"
         sleep 60
@@ -43,4 +44,3 @@ docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws
             """
         }
     }
-}
