@@ -8,13 +8,13 @@ node('docker') {
         sh "mvn -B -V -Dmaven.local.repo=${pwd()}/.m2/repo clean package"
     }
 
-    // build docker image 'cleclerc/game-of-life' and push it to docker hub
+    // build docker image 'game-of-life' and push it to ECR
     stage 'Build & Push Docker Image'
 
-    echo 'Build docker image cleclerc/game-of-life...'
-    def gameOfLifeImage = docker.build('cleclerc/game-of-life', 'gameoflife-web')
+    echo 'Build docker image game-of-life...'
+    def gameOfLifeImage = docker.build('564007293907.dkr.ecr.us-east-1.amazonaws.com/game-of-life', 'gameoflife-web')
 
-    echo 'Push docker image cleclerc/game-of-life to ECR...'
+    echo 'Push docker image game-of-life to ECR...'
     docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws') {
         gameOfLifeImage.push()
     }
