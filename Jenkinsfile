@@ -12,11 +12,11 @@ node('docker') {
     stage 'Build & Push Docker Image'
 
     echo 'Build docker image game-of-life...'
-    def gameOfLifeImage = docker.build('564007293907.dkr.ecr.us-east-1.amazonaws.com/game-of-life', 'gameoflife-web')
+    sh 'docker build -t 564007293907.dkr.ecr.us-east-1.amazonaws.com/game-of-life:latest gameoflife-web'
 
     echo 'Push docker image game-of-life to ECR...'
     docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws') {
-        gameOfLifeImage.push()
+        sh 'docker push 564007293907.dkr.ecr.us-east-1.amazonaws.com/game-of-life:latest'
     }
 
     stage 'Redeploy ECS Service'
