@@ -15,7 +15,7 @@ node('docker') {
     sh 'docker build -t 564007293907.dkr.ecr.us-east-1.amazonaws.com/game-of-life:latest gameoflife-web'
 
     echo 'Push docker image game-of-life to ECR...'
-    docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'aws') {
+    docker.withRegistry('https://564007293907.dkr.ecr.us-east-1.amazonaws.com', 'ecr:aws') {
         sh 'docker push 564007293907.dkr.ecr.us-east-1.amazonaws.com/game-of-life:latest'
     }
 
