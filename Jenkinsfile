@@ -1,3 +1,5 @@
+#! groovy
+
 node('docker') {
     checkout scm
     echo "1. PWD: ${pwd()}"
