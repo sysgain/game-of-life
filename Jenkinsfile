@@ -58,11 +58,17 @@ docker.image('cloudbees/java-build-tools:0.0.7.1').inside {
             sh """
             oc project game-of-life
             oc start-build j2ee-application-build --wait=true
-            oc deploy frontend --latest > .openshift-deploy-number
             """
+
+            //with build triggers disabled request a deploy with the latest build
+            //sh "oc deploy frontend --latest > .openshift-deploy-number"
+
+            //with build triggers enabled get the current deploy number
+            sh "oc deploy frontend > .openshift-deploy-number"
+            
             def deployMessage = readFile(".openshift-deploy-number")
-            def deployNumber = deployMessage.substring(deployMessage.indexOf('#')).trim()
-            echo "$deployMessage".trim()
+            def deployNumber = deployMessage.substring(deployMessage.indexOf('#')).tokenize()[0]
+            echo "$deployMessage"
 
             // Wait for OpenShift deployment
             timeout(time: 5, unit: 'MINUTES') {
