@@ -38,7 +38,7 @@ node ("linux") {
     
     retry(count: 5) { 
         echo "Checking for the application at ${env.svchost}/gameoflife"
-        sh "sleep 5 && curl ${env.svchost}/gameoflife"
+        sh "sleep 5 && curl -f ${env.svchost}/gameoflife"
     }
 
 }
