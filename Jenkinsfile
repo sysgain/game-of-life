@@ -6,7 +6,7 @@ properties([
    ]
 ])
 
-docker.image('cloudbees/java-build-tools:0.0.6').inside {
+docker.image('cloudbees/java-build-tools:1.0.0').inside {
 
     checkout scm
     def mavenSettingsFile = "${pwd()}/.m2/settings.xml"
