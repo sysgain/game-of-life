@@ -1,5 +1,5 @@
 
-docker.image('cloudbees/java-build-tools:0.0.7.1').inside {
+docker.image('cloudbees/java-build-tools:1.0.0').inside {
     checkout scm
     def mavenSettingsFile = "${pwd()}/.m2/settings.xml"
 
@@ -33,7 +33,7 @@ mail \
 input "Deploy on http://gameoflife-ecs.beesshop.org/ and run Selenium tests?"
 checkpoint 'Deploy to QA'
 
-docker.image('cloudbees/java-build-tools:0.0.7.1').inside {
+docker.image('cloudbees/java-build-tools:1.0.0').inside {
     wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 'aws-cleclerc-admin', defaultRegion: 'us-east-1']) {
         // TODO THESE ARE PROBABLY NOT THE BEST ECS CALLS
         sh "aws ecs update-service --service game-of-life --desired-count 0"
