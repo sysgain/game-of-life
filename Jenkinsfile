@@ -1,5 +1,5 @@
 #!groovy
-docker.image('cloudbees/java-build-tools:0.0.5').inside {
+docker.image('cloudbees/java-build-tools:1.0.0').inside {
 
     checkout scm
     def mavenSettingsFile = "${pwd()}/.m2/settings.xml"
@@ -37,7 +37,7 @@ node {
 
     // web browser tests are fragile, test up to 3 times
     retry(3) {
-        docker.image('cloudbees/java-build-tools:0.0.5').inside {
+        docker.image('cloudbees/java-build-tools:1.0.0').inside {
             def mavenSettingsFile = "${pwd()}/.m2/settings.xml"
 
             wrap([$class: 'ConfigFileBuildWrapper',
