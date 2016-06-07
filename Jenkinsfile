@@ -6,7 +6,7 @@ properties([
    ]
 ])
 
-docker.image('cloudbees/java-build-tools:0.0.6').inside {
+docker.image('cloudbees/java-build-tools:1.0.0').inside {
 
     checkout scm
 
@@ -45,7 +45,7 @@ mail \
 input "Deploy on http://game-of-life-qa.elasticbeanstalk.com/ and run Selenium tests?"
 checkpoint 'Deploy to QA'
 
-docker.image('cloudbees/java-build-tools:0.0.6').inside {
+docker.image('cloudbees/java-build-tools:1.0.0').inside {
 
     wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 'aws-beanstalk-credentials', defaultRegion: 'us-east-1']) {
 
@@ -82,7 +82,7 @@ node {
 
     // web browser tests are fragile, test up to 3 times
     retry(3) {
-        docker.image('cloudbees/java-build-tools:0.0.6').inside {
+        docker.image('cloudbees/java-build-tools:1.0.0').inside {
             def mavenSettingsFile = "${pwd()}/.m2/settings.xml"
 
             wrap([$class: 'ConfigFileBuildWrapper',
