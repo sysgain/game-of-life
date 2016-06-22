@@ -47,27 +47,28 @@ mail \
 //input "Deploy on http://jboss.beesshop.org/ and run Selenium tests?"
 checkpoint 'Deploy to QA'
 
-docker.image('jboss/wildfly').inside {
+docker.image('registry.access.redhat.com/jboss-eap-7/eap70-openshift').inside {
 
-  // DEPLOY TO JBOSS
+  // Deploy to JBoss
   def destinationWarFile = "gameoflife-${env.BUILD_NUMBER}.war"
   def versionLabel = "game-of-life#${env.BUILD_NUMBER}"
   def description = "${env.BUILD_URL}"
   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jboss-ec2', passwordVariable: 'password', usernameVariable: 'username']]) { 
-    sh "/opt/jboss/wildfly/bin/jboss-cli.sh --controller=jboss.beesshop.org:9990 --connect --user=a${env.username} --password=${env.password} --command='deploy gameoflife-web/target/gameoflife.war --force'" 
+    sh "/opt/eap/bin/jboss-cli.sh --controller=jboss.beesshop.org:9990 --connect --user=${env.username} --password=${env.password} --command='deploy gameoflife-web/target/gameoflife.war --force --name=gameoflife-qa'" 
   }
   
   sleep 10L // wait for JBOSS to update the status
 
-  // WAIT FOR DEPLOYMENT
+  //Check for correct deployment
  timeout(time: 5, unit: 'MINUTES') {
       waitUntil {
-          sh "/opt/jboss/wildfly/bin/jboss-cli.sh --controller=jboss.beesshop.org:9990 --connect --user=a${env.username} --password=${env.password} --command='ls /deployment=gameoflife.war'> .jboss-status"
-
-          // parse  output
-          def jbossStatus = readFile(".jboss-status")
-          println "$jbossStatus"
-          return jbossStatus.toLowerCase().contains("status=ok")
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jboss-ec2', passwordVariable: 'password', usernameVariable: 'username']]) { 
+          sh "/opt/eap/bin/jboss-cli.sh --controller=jboss.beesshop.org:9990 --connect --user=a${env.username} --password=${env.password} --command='ls /deployment=gameoflife-qa'> .jboss-status"
+        }
+        // parse  output
+        def jbossStatus = readFile(".jboss-status")
+        println "$jbossStatus"
+        return jbossStatus.toLowerCase().contains("status=ok")
       }
   }
 }
@@ -95,4 +96,32 @@ node {
             }
         }
     }
+}
+
+checkpoint 'Deploy to Prod'
+
+docker.image('registry.access.redhat.com/jboss-eap-7/eap70-openshift').inside {
+
+  // Deploy to JBoss
+  def destinationWarFile = "gameoflife-${env.BUILD_NUMBER}.war"
+  def versionLabel = "game-of-life#${env.BUILD_NUMBER}"
+  def description = "${env.BUILD_URL}"
+  withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jboss-ec2', passwordVariable: 'password', usernameVariable: 'username']]) { 
+    sh "/opt/eap/bin/jboss-cli.sh --controller=jboss.beesshop.org:9990 --connect --user=${env.username} --password=${env.password} --command='deploy gameoflife-web/target/gameoflife.war --force --name=gameoflife-prod' " 
+  }
+  
+  sleep 10L // wait for JBOSS to update the status
+
+  //Check for correct deployment
+ timeout(time: 5, unit: 'MINUTES') {
+      waitUntil {
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jboss-ec2', passwordVariable: 'password', usernameVariable: 'username']]) { 
+          sh "/opt/eap/bin/jboss-cli.sh --controller=jboss.beesshop.org:9990 --connect --user=a${env.username} --password=${env.password} --command='ls /deployment=gameoflife-prod'> .jboss-status"
+        }
+        // parse  output
+        def jbossStatus = readFile(".jboss-status")
+        println "$jbossStatus"
+        return jbossStatus.toLowerCase().contains("status=ok")
+      }
+  }
 }

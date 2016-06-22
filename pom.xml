@@ -142,7 +142,17 @@
                     <api_hoster>app.jelastic.servint.net</api_hoster>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <hostname>jboss.beesshop.org</hostname>
+                    <port>9990</port>
+                    <username>manager</username>
+                    <password>THE_PASSWORD</password>
+                </configuration>
+            </plugin>
         </plugins>
 
         <pluginManagement>
