@@ -1,6 +1,6 @@
 
-webapp-usrname = ""
-webapp-server-url = ""
+webapp_usrname = ""
+webapp_server_url = ""
 
 def buildProject(){
     git branch: 'azure-pipeline', poll: true, url: 'https://github.com/sysgain/game-of-life'     
@@ -8,7 +8,7 @@ def buildProject(){
 } 
 
 def deployProject(){     
-    sh "scp ./gameoflife-web/target/gameoflife.war $webapp-usrname@$webapp-server-url:/home/$webapp-usrname/stack/apache-tomcat/webapps/" 
+    sh "scp ./gameoflife-web/target/gameoflife.war $webapp_usrname@$webapp_server_url:/home/$webapp_usrname/stack/apache-tomcat/webapps/" 
 } 
 
 node{     
