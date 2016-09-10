@@ -4,7 +4,7 @@ def buildProject(){
 } 
 
 def deployProject(){     
-    sh "scp ./gameoflife-web/target/gameoflife.war cb-jenkins@bitnamidnsnq5gdvwi5sfcy.eastus.cloudapp.azure.com:/home/cb-jenkins/stack/apache-tomcat/webapps/" 
+    sh "scp ./gameoflife-web/target/gameoflife.war [[webapp-sever-usrname]]@[[webapp-server-url]]:/home/[[webapp-server-username]]/stack/apache-tomcat/webapps/" 
 } 
 
 node{     
