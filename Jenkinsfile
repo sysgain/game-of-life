@@ -12,4 +12,6 @@ node{
     buildProject()         
     stage "Deploy to Azure"     
     deployProject() 
+    
+    sh "pwd"
 }
